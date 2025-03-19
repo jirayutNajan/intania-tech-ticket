@@ -13,7 +13,8 @@ export default function Page() {
   const [showFlash, setShowFlash] = useState(false);
   const [showTeamPass, setShowTeamPass] = useState(false);
   const [whirlpoolAnimation, setWhirlpoolAnimation] = useState(false);
-  const [explodeAnimation, setExplodeAnimation] = useState(false);
+  const [mergeAnimation, setMergeAnimation] = useState(false); // New state for merging tickets
+  const [showGlow, setShowGlow] = useState(false); // New state for glowing effect
 
   // Function to handle ticket claim button clicks
   const handleClaimTicket = (ticketNumber: 1 | 2) => {
@@ -33,22 +34,24 @@ export default function Page() {
       setTimeout(() => {
         setWhirlpoolAnimation(true);
 
-        // Wait for the whirlpool animation to complete before starting the explosion animation
+        // Wait for the whirlpool animation to complete before starting the merge animation
         setTimeout(() => {
-          setExplodeAnimation(true);
+          setWhirlpoolAnimation(false); // End whirlpool animation
+          setMergeAnimation(true); // Trigger merge animation
 
-          // After explosion animation, show flash
+          // Show glowing effect during the merge
           setTimeout(() => {
-            setShowFlash(true);
+            setShowGlow(true);
 
-            // After flash, show team pass
+            // After glowing effect, show the Team Pass
             setTimeout(() => {
-              setShowFlash(false);
+              setShowGlow(false);
+              setMergeAnimation(false);
               setShowTeamPass(true);
-            }, 1000);
-          }, 1000);
-        }, 2000); // Adjust this delay to match the whirlpool animation duration
-      }, 1000); // Adjust this delay to match the claimed animation duration
+            }, 1500); // Duration of glowing effect
+          }, 1000); // Delay before glowing effect starts
+        }, 2000); // Duration of whirlpool animation
+      }, 1000); // Delay before whirlpool animation starts
     }
   }, [claimedTickets]);
 
@@ -71,109 +74,94 @@ export default function Page() {
           How to Get Tickets?
         </button>
       </div>
-      <div className="-mt-4 flex h-1/2 w-full grow-[0.5] items-center justify-center">
+      <div className="-mt-4 flex h-1/2 w-full grow-[0.5] items-center justify-center relative">
         {showTeamPass ? (
           <div className="flex flex-col items-center justify-center animate-fadeIn">
-            <div className="relative flex items-center justify-center" />
-            <TeamPass className="scale-50 duration-500 ease-in-out hover:scale-[0.52] active:scale-[1.02] sm:scale-90 sm:hover:scale-[0.92] md:scale-100 md:hover:scale-[1.02]" />
+            {/* Light effect behind TeamPass */}
+            <div className="absolute z-[-1] h-[500px] w-[500px] rounded-full bg-white blur-[200px] opacity-80 animate-pulse" />
+            
+            <div className="relative flex items-center justify-center">
+              <TeamPass className="scale-50 duration-500 ease-in-out hover:scale-[0.52] active:scale-[1.02] sm:scale-90 sm:hover:scale-[0.92] md:scale-100 md:hover:scale-[1.02]" />
+            </div>
             <button className="-mt-6 rounded-full border-2 border-white/40 bg-white/20 px-6 py-1.5 tracking-tight text-white backdrop-blur-sm hover:bg-white/25 sm:mt-2 sm:px-10 sm:py-2.5 md:mt-8">
               Register
             </button>
           </div>
         ) : (
-          <div className="flex flex-col gap-10 md:flex-row lg:gap-24">
-            {/* INPUT 1 */}
-            <div className={cn(
-              "relative flex aspect-[4/3] w-[320px] items-center gap-6 rounded-3xl border-2 p-6 backdrop-blur-sm sm:p-10 lg:w-[440px] transition-all duration-500",
-              claimedTickets.ticket1 && !whirlpoolAnimation && "ticket-claimed-left",
-              !claimedTickets.ticket1 && "border-white/40",
-              whirlpoolAnimation && "animate-whirlpoolLeft",
-              explodeAnimation && "animate-explode"
-            )}>
-              <div className="flex h-full w-full flex-col items-center justify-center gap-3.5 sm:gap-6">
-                {claimedTickets.ticket1 ? (
-                  <>
-                    <Figma className="text-white w-20 h-20" />
-                    <div className="absolute bottom-4 text-white text-sm">
-                      Expiring in 1 days 23 hours
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <h2 className="select-none text-center font-ndot47 text-4xl tracking-tighter text-white sm:text-5xl lg:text-6xl">
-                      Ticket 1
-                    </h2>
-                    <input
-                      className="w-full rounded-2xl border-2 border-white/10 bg-white/10 px-4 py-2 font-geistSans text-base font-medium tracking-tighter text-white outline-none backdrop-blur-sm placeholder:text-white/50 focus-visible:border-white/50 focus-visible:bg-white/20 md:px-6 md:py-3.5 md:text-xl"
-                      placeholder="Fill Your Ticket Code Here"
-                      value={ticket1}
-                      onChange={(e) => setTicket1(e.target.value)}
-                      disabled={claimedTickets.ticket1}
-                    />
-                    <button
-                      className={cn(
-                        "rounded-full border-2 px-4 py-1.5 tracking-tight backdrop-blur-sm sm:px-8 sm:py-2.5 transition-all duration-300",
-                        claimedTickets.ticket1 
-                          ? "border-[#8A2BE2]/40 bg-[#8A2BE2]/20 text-white/80 cursor-default"
-                          : "border-white/20 bg-white/20 hover:bg-white/30 text-white"
-                      )}
-                      type="button"
-                      onClick={() => handleClaimTicket(1)}
-                      disabled={claimedTickets.ticket1}
-                    >
-                      {claimedTickets.ticket1 ? "Ticket Claimed" : "Claim Ticket"}
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
+          <>
+            {/* Glowing effect */}
+            {showGlow && (
+              <div className="absolute z-50 h-[300px] w-[300px] rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 blur-3xl opacity-80 animate-pulse" />
+            )}
 
-            {/* INPUT 2 */}
-            <div className={cn(
-              "relative flex aspect-[4/3] w-[320px] items-center gap-6 rounded-3xl border-2 p-6 backdrop-blur-sm sm:p-10 lg:w-[440px] transition-all duration-500",
-              claimedTickets.ticket2 && !whirlpoolAnimation && "ticket-claimed-right",
-              !claimedTickets.ticket2 && "border-white/40",
-              whirlpoolAnimation && "animate-whirlpoolRight",
-              explodeAnimation && "animate-explode"
-            )}>
-              <div className="flex h-full w-full flex-col items-center justify-center gap-3.5 sm:gap-6">
-                {claimedTickets.ticket2 ? (
-                  <>
-                    <Settings className="text-white w-20 h-20" />
-                    <div className="absolute bottom-4 text-white text-sm">
-                      Expiring in 1 days 23 hours
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <h2 className="select-none text-center font-ndot47 text-4xl tracking-tighter text-white sm:text-5xl lg:text-6xl">
-                      Ticket 2
-                    </h2>
-                    <input
-                      className="w-full rounded-2xl border-2 border-white/10 bg-white/10 px-4 py-2 font-geistSans text-base font-medium tracking-tighter text-white outline-none backdrop-blur-sm placeholder:text-white/50 focus-visible:border-white/50 focus-visible:bg-white/20 md:px-6 md:py-3.5 md:text-xl"
-                      placeholder="Fill Your Ticket Code Here"
-                      value={ticket2}
-                      onChange={(e) => setTicket2(e.target.value)}
-                      disabled={claimedTickets.ticket2}
-                    />
-                    <button
-                      className={cn(
-                        "rounded-full border-2 px-4 py-1.5 tracking-tight backdrop-blur-sm sm:px-8 sm:py-2.5 transition-all duration-300",
-                        claimedTickets.ticket2 
-                          ? "border-[#8A2BE2]/40 bg-[#8A2BE2]/20 text-white/80 cursor-default"
-                          : "border-white/20 bg-white/20 hover:bg-white/30 text-white"
-                      )}
-                      type="button"
-                      onClick={() => handleClaimTicket(2)}
-                      disabled={claimedTickets.ticket2}
-                    >
-                      {claimedTickets.ticket2 ? "Ticket Claimed" : "Claim Ticket"}
-                    </button>
-                  </>
-                )}
+            <div className="flex flex-col gap-10 md:flex-row lg:gap-24">
+              {/* INPUT 1 */}
+              <div className={cn(
+                "relative flex aspect-[4/3] w-[320px] items-center gap-6 rounded-3xl border-2 p-6 backdrop-blur-sm sm:p-10 lg:w-[440px] transition-all duration-500",
+                claimedTickets.ticket1 && !whirlpoolAnimation && "ticket-claimed-left",
+                !claimedTickets.ticket1 && "border-white/40",
+                whirlpoolAnimation && "animate-whirlpoolLeft",
+                mergeAnimation && "absolute left-1/2 top-1/2 transform -translate-x-[120%] -translate-y-1/2 z-50 scale-75 rotate-6", // Merge animation for Ticket 1
+              )}>
+                <div className="flex h-full w-full flex-col items-center justify-center gap-3.5 sm:gap-6">
+                  {claimedTickets.ticket1 ? (
+                    <>
+                      <Figma className="text-white w-20 h-20" />
+                      <div className="absolute bottom-4 text-white text-sm">
+                        Expiring in 1 days 23 hours
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <h2 className="select-none text-center font-ndot47 text-4xl tracking-tighter text-white sm:text-5xl lg:text-6xl">
+                        Ticket 1
+                      </h2>
+                      <input
+                        className="w-full rounded-2xl border-2 border-white/10 bg-white/10 px-4 py-2 font-geistSans text-base font-medium tracking-tighter text-white outline-none backdrop-blur-sm placeholder:text-white/50 focus-visible:border-white/50 focus-visible:bg-white/20 md:px-6 md:py-3.5 md:text-xl"
+                        placeholder="Fill Your Ticket Code Here"
+                        value={ticket1}
+                        onChange={(e) => setTicket1(e.target.value)}
+                        disabled={claimedTickets.ticket1}
+                      />
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* INPUT 2 */}
+              <div className={cn(
+                "relative flex aspect-[4/3] w-[320px] items-center gap-6 rounded-3xl border-2 p-6 backdrop-blur-sm sm:p-10 lg:w-[440px] transition-all duration-500",
+                claimedTickets.ticket2 && !whirlpoolAnimation && "ticket-claimed-right",
+                !claimedTickets.ticket2 && "border-white/40",
+                whirlpoolAnimation && "animate-whirlpoolRight",
+                mergeAnimation && "absolute left-1/2 top-1/2 transform -translate-x-[-120%] -translate-y-1/2 z-50 scale-75 rotate-[-6deg]", // Merge animation for Ticket 2
+              )}>
+                <div className="flex h-full w-full flex-col items-center justify-center gap-3.5 sm:gap-6">
+                  {claimedTickets.ticket2 ? (
+                    <>
+                      <Settings className="text-white w-20 h-20" />
+                      <div className="absolute bottom-4 text-white text-sm">
+                        Expiring in 1 days 23 hours
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <h2 className="select-none text-center font-ndot47 text-4xl tracking-tighter text-white sm:text-5xl lg:text-6xl">
+                        Ticket 2
+                      </h2>
+                      <input
+                        className="w-full rounded-2xl border-2 border-white/10 bg-white/10 px-4 py-2 font-geistSans text-base font-medium tracking-tighter text-white outline-none backdrop-blur-sm placeholder:text-white/50 focus-visible:border-white/50 focus-visible:bg-white/20 md:px-6 md:py-3.5 md:text-xl"
+                        placeholder="Fill Your Ticket Code Here"
+                        value={ticket2}
+                        onChange={(e) => setTicket2(e.target.value)}
+                        disabled={claimedTickets.ticket2}
+                      />
+                    </>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
     </div>
