@@ -1,3 +1,4 @@
 Example video: 
 
-[![Demo Video](https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg)](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+[Watch Demo Video](https://github.com/jirayutNajan/intania-tech-ticket/blob/main/Screen%20Recording%202568-03-19%20at%2016.46.46.mov)
+
