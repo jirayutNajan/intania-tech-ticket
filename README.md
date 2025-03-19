@@ -1,10 +1,3 @@
-# Intania Hackathon Tickets Example
+Example video: 
 
-- Create a new animation for merging tickets with more stylish and cool design.
-- No functional implementation is required.
-- The animation should trigger only after both tickets are entered.
-- You can utilize this repository boilerplate, or you can use any programming language, framework, or library of your choice.
-- Upload the project to GitHub along with a screen recording of the animation.
-- Submit the GitHub repository link viaa [@intania.tech](https://instagram.com/intania.tech) Instagram Direct Message
-
-https://github.com/user-attachments/assets/d11b322d-cd63-4224-b06f-6193b0b898c9
+[![Demo Video](https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg)](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
